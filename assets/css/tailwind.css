@@ -1,0 +1,630 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+
+@import "tailwindcss";
+
+
+@theme {
+  --color-dark2: #433F34;
+  --color-dark1: #161615;
+  --color-main: #7D963D;
+  --color-gray2: #BFC0C6;
+}
+
+
+
+
+
+html {
+  scroll-behavior: smooth;
+    font-family: "Urbanist", sans-serif;
+}
+
+.container {
+  max-width: 1630px;
+  width: 100%;
+  margin: auto;
+  padding-inline: 20px;
+}
+
+@media (max-width:640px) {
+  .container {
+    padding-inline: 16px;
+  }
+}
+
+
+
+@layer base {
+  .img-fluid {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+.section-padding {
+  padding-block: 96px;
+}
+
+@media (max-width:1024px) {
+  .section-padding {
+    padding-block: 60px;
+  }
+}
+
+@media (max-width:640px) {
+  .section-padding {
+    padding-block: 48px;
+  }
+}
+
+
+
+/* =========================
+   CSS RESET / BASE
+========================= */
+
+/* Box sizing reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin & padding */
+
+/* HTML & body */
+body {
+  height: 100%;
+  font-family: "Inter Tight", sans-serif;
+  overflow-x: hidden;
+}
+
+
+
+/* Remove link underline */
+a {
+  text-decoration: none;
+}
+
+/* Images responsive */
+img,
+picture,
+video,
+canvas {
+  max-width: 100%;
+  display: block;
+}
+
+/* Form elements inherit font */
+
+
+/* Button cursor */
+button {
+  cursor: pointer;
+}
+
+/* Table reset */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* smooth scrooll */
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+
+
+
+/*  navbar start */
+/* ============================================================
+   NAVBAR STYLES
+   ============================================================ */
+
+/* ── WRAPPER ── */
+/* ── WRAPPER ── */
+#navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 50;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* topbar smooth collapse */
+.nav-topbar {
+  max-height: 60px;
+  overflow: hidden;
+  transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.5s ease,
+              padding 0.5s ease;
+  opacity: 1;
+}
+
+#navbar.navbar--scrolled .nav-topbar {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* scrolled state — only white bg on navbar-inner area */
+#navbar.navbar--scrolled {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+}
+/* Mobile menu open (not scrolled) — JS adds .navbar--menu-open */
+#navbar.navbar--menu-open:not(.navbar--scrolled) {
+  background-color: #ffffff;
+}
+
+/* ── INNER ROW ── */
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* ── LOGO ── */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.navbar-logo img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+/* ── RIGHT SIDE WRAPPER ── */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ── DESKTOP NAV LINKS ── */
+
+/* ---- Nav Links ---- */
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  list-style: none;
+}
+ 
+.nav-item a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 15px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-dark2);
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+@media(max-width:1200px){
+   
+.nav-item a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.navbar-logo{
+  max-width: 200px;
+}
+}
+@media(max-width:640px){
+  .navbar-logo{
+  max-width: 150px;
+}
+}
+ 
+/* Green dot — hidden by default */
+.nav-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--color-main);
+  flex-shrink: 0;
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.18s ease;
+}
+ 
+/* Active state */
+.nav-item.active a {
+  color: var(--color-main);
+}
+ 
+.nav-item.active .nav-dot {
+  transform: scale(1);
+  opacity: 1;
+}
+ 
+/* Hover state */
+.nav-item a:hover {
+  color: var(--color-main);
+}
+ 
+.nav-item a:hover .nav-dot {
+  transform: scale(1);
+  opacity: 1;
+}
+ 
+/* ---- CTA Button ---- */
+.navbar-cta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 25px;
+  border: 1.5px solid var(--color-dark2);
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-dark2);
+  background: transparent;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background 0.25s ease,
+              color 0.25s ease,
+              border-color 0.25s ease;
+}
+ 
+.navbar-cta:hover {
+  background: var(--color-main);
+  color: #ffffff;
+  border-color: var(--color-main);
+}
+.navbar-cta:hover .upwork-img{
+ filter: brightness(0) invert(1);
+}
+ 
+.cta-text {
+  white-space: nowrap;
+}
+ 
+ 
+/* ---- Arrow animation ---- */
+.cta-arrow-wrap {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+ 
+.cta-arrow-wrap svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+ 
+/* Current arrow — sitting at center */
+.arrow-cur {
+  transform: translate(0, 0);
+}
+ 
+/* Next arrow — waiting at bottom-left */
+.arrow-nxt {
+  transform: translate(-130%, 130%);
+}
+ 
+/* On hover: current exits top-right, next enters from bottom-left */
+.navbar-cta:hover .arrow-cur {
+  transform: translate(130%, -130%);
+}
+ 
+.navbar-cta:hover .arrow-nxt {
+  transform: translate(0, 0);
+}
+
+/* ── HAMBURGER BUTTON ── */
+#hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+}
+
+@media (min-width: 991px) {
+  #hamburger { display: none; }
+}
+
+/* Hamburger bars */
+.ham-top,
+.ham-mid,
+.ham-bot {
+  position: absolute;
+  display: block;
+  height: 1.5px;
+  background-color: #000000;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.ham-top { width: 24px; transform: translateY(-7px); }
+.ham-mid { width: 24px; }
+.ham-bot { width: 16px; transform: translateY(7px); }
+
+/* ── MOBILE MENU ── */
+#mobile-menu {
+  display: block;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.5s ease-in-out;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@media (min-width: 991px) {
+  #mobile-menu { display: none; }
+}
+
+/* Mobile menu inner */
+.mobile-menu-inner ul {
+  padding: 0 0 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 640px) {
+  .mobile-menu-inner ul{ gap: 10px; }
+}
+
+@media (min-width: 1024px) {
+  .mobile-menu-inner ul{ gap: 20px; }
+}
+
+/* Mobile nav links */
+.mobile-menu-inner ul li a {
+  font-size: 18px;
+  color: var(--color-dark1);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.mobile-menu-inner ul li a:hover {
+  color: var(--color-dark2);
+}
+/*  navbar end */
+
+#navbar {
+  transition: transform 0.35s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#navbar.navbar--hidden {
+  transform: translateY(-100%);
+}
+
+/* Tagline hide below 1500px */
+@media (max-width: 1499px) {
+  .navbar-tagline { display: none; }
+}
+
+/* Mobile: nav links + CTA hide, hamburger show */
+@media (max-width: 991px) {
+  .navbar-links { display: none; }
+  .navbar-actions > div > .navbar-cta { display: none; }
+
+  .mobile-menu-inner ul li a {
+  font-size: 16px;
+}
+}
+
+
+
+
+
+
+
+/*  banner start */
+    /* ── Arrow wrap ── */
+    .cta-arrow-wrap {
+      position: relative;
+      width: 20px;
+      height: 20px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+ 
+    .cta-arrow-wrap svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+ 
+    /* Current arrow — sitting at center */
+    .arrow-cur { transform: translate(0, 0); }
+ 
+.btn-secondary .arrow-nxt { transform: translate(-130%, 0); }
+
+/* Hover states */
+.btn-primary:hover .arrow-cur  { transform: translate(130%, -130%); }
+.btn-primary:hover .arrow-nxt  { transform: translate(0, 0); }
+
+.btn-secondary:hover .arrow-cur { transform: translate(130%, 0); }
+.btn-secondary:hover .arrow-nxt { transform: translate(0, 0); }
+
+
+
+
+
+
+
+
+  /* ── Right Hero Container ── */
+  .hero-right {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+  }
+ 
+  /* ── SVG Logo behind person ── */
+  .upwork-logo-svg {
+    position: absolute;
+    top: 127px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: auto;
+    z-index: 1;
+    max-width: 550px;
+    
+    /* will be animated */
+  }
+ 
+  /* SVG paths start invisible for draw animation */
+  .upwork-logo-svg path {
+    fill: none;
+    stroke: #7D963D;
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    /* dasharray/offset set by JS */
+  }
+ 
+  /* After draw finishes, fill fades in */
+  .upwork-logo-svg path.fill-ready {
+    transition: fill 0.5s ease;
+  }
+ 
+  /* ── Person Image ── */
+  .hero-person-wrap {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(40px) scale(1);
+  }
+ 
+  .hero-person-wrap img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+  }
+ 
+  /* ── Stats Bar ── */
+  .hero-stats-bar {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+   
+    background: #fff;
+    border-radius: 50px;
+    padding: 10px 20px;
+    white-space: nowrap;
+    opacity: 0;
+    translateY: 20px;
+  }
+ 
+  .stat-item {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+ 
+  .stat-item:not(:last-child) {
+    border-right: 1.5px solid #e0e0e0;
+  }
+ 
+  .stat-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+ 
+
+ 
+  /* ── Demo wrapper (remove when integrating into real layout) ── */
+
+ 
+  /* Responsive */
+  @media (max-width: 640px) {
+    .hero-right { max-width: 100%; }
+    .stat-item { padding: 0 10px; gap: 5px; }
+    .hero-stats-bar { padding: 8px 10px; bottom: 10px; }
+  }
+
+
+
+
+  
