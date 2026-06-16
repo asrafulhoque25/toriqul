@@ -676,3 +676,10 @@ html.lenis body {
     background-size: cover;
     background-position: center center;
   }
+
+
+
+ .faq-a-wrap{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s ease; }
+  .faq-item.open .faq-a-wrap{ grid-template-rows:1fr; }
+  .faq-item.open .faq-vert{ transform:rotate(90deg); }
+  .faq-item.open .faq-icon{ color:#7D963D; }
