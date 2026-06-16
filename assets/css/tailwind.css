@@ -548,6 +548,15 @@ html.lenis body {
     
     /* will be animated */
   }
+
+  @media(max-width:640px){
+    .upwork-logo-svg {
+    top: 50px;
+    max-width: 550px;
+    
+    /* will be animated */
+  }
+  }
  
   /* SVG paths start invisible for draw animation */
   .upwork-logo-svg path {
@@ -628,3 +637,42 @@ html.lenis body {
 
 
   
+
+  /* testimonial  */
+  .content-our-testimonial .testimonial-real-content-slider-arrows-desktop,
+  .content-our-testimonial .testimonial-real-content-slider-arrows-mobile{ gap:12px; justify-content:center; }
+ 
+  .content-our-testimonial .testimonial-real-content-slider-arrows-desktop .splide__arrow,
+  .content-our-testimonial .testimonial-real-content-slider-arrows-mobile  .splide__arrow{
+    position:static; transform:none; width:48px; height:48px; border:none; border-radius:9999px;
+    display:flex; align-items:center; justify-content:center; opacity:1; transition:background .25s ease;
+  }
+  .content-our-testimonial .testimonial-real-content-slider-arrows-desktop .splide__arrow svg,
+  .content-our-testimonial .testimonial-real-content-slider-arrows-mobile  .splide__arrow svg{ width:16px; height:16px; }
+  .content-our-testimonial .testimonial-real-content-slider-arrows-desktop .splide__arrow svg path,
+  .content-our-testimonial .testimonial-real-content-slider-arrows-mobile  .splide__arrow svg path{ fill:currentColor; }
+ 
+  .content-our-testimonial .testimonial-real-content-slider-arrows-desktop .splide__arrow--prev,
+  .content-our-testimonial .testimonial-real-content-slider-arrows-mobile  .splide__arrow--prev{ background:#EAEFD9; color:#5d6b34; }
+  .content-our-testimonial .testimonial-real-content-slider-arrows-desktop .splide__arrow--prev:hover,
+  .content-our-testimonial .testimonial-real-content-slider-arrows-mobile  .splide__arrow--prev:hover{ background:#dfe6c5; }
+  .content-our-testimonial .testimonial-real-content-slider-arrows-desktop .splide__arrow--prev svg,
+  .content-our-testimonial .testimonial-real-content-slider-arrows-mobile  .splide__arrow--prev svg{ transform:rotate(180deg); }
+ 
+  .content-our-testimonial .testimonial-real-content-slider-arrows-desktop .splide__arrow--next,
+  .content-our-testimonial .testimonial-real-content-slider-arrows-mobile  .splide__arrow--next{ background:#7d9b40; color:#fff; }
+  .content-our-testimonial .testimonial-real-content-slider-arrows-desktop .splide__arrow--next:hover,
+  .content-our-testimonial .testimonial-real-content-slider-arrows-mobile  .splide__arrow--next:hover{ background:#6c883a; }
+ 
+  /* show/hide rule (same logic as your project) */
+  .testimonial-real-content-slider-arrows-desktop{ display:none; }
+  @media (min-width:1024px){ .testimonial-real-content-slider-arrows-desktop{ display:flex; } }
+  /* testimonial  */
+
+
+
+  .tariqul-bottom-section{
+    background-image: url(../images/cta.webp);
+    background-size: cover;
+    background-position: center center;
+  }

@@ -46,7 +46,7 @@ if (navbar) {
     tickingNav = true;
 
     requestAnimationFrame(() => {
-      if (scroll <= 300) {
+      if (scroll <= 100) {
         navbar.classList.remove('navbar--scrolled');
       } else {
         navbar.classList.add('navbar--scrolled');
@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
     autoScroll: { speed: 1, pauseOnHover: true, pauseOnFocus: false },
     breakpoints: {
       1280: { perPage: 5 }, 1024: { perPage: 4 },
-      768: { perPage: 3 },  640: { perPage: 2, gap: '8px' }
+      768: { perPage: 3 },  640: { perPage: 3, gap: '8px' }
     }
   });
 
@@ -359,3 +359,114 @@ gsap.utils.toArray('img').forEach(img => {
 
   observer.observe(section);
 })();
+
+
+// portfolio view more
+document.addEventListener('DOMContentLoaded', () => {
+  if (!window.gsap) return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  // --- Scroll reveal ---
+  gsap.from('.reveal-head', {
+    y: 30, opacity: 0, duration: 0.8, ease: 'power3.out',
+    scrollTrigger: { trigger: '#works', start: 'top 80%' }
+  });
+  gsap.from('.work-card', {
+    y: 60, opacity: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out',
+    scrollTrigger: { trigger: '#works-grid', start: 'top 85%' }
+  });
+
+  // --- "View Work" cursor-follow ---
+  const medias = [...document.querySelectorAll('.work-media')];
+  const buttons = medias.map((m) => m.querySelector('.view-work'));
+
+  // start all hidden + centered on their point
+  buttons.forEach((btn) =>
+    gsap.set(btn, { xPercent: -50, yPercent: -50, scale: 0, opacity: 0 })
+  );
+
+  const showBtn = (btn) =>
+    gsap.to(btn, { scale: 1, opacity: 1, duration: 0.45, ease: 'back.out(1.8)' });
+  const hideBtn = (btn) =>
+    gsap.to(btn, { scale: 0, opacity: 0, duration: 0.3, ease: 'power2.in' });
+
+  medias.forEach((media) => {
+    const btn = media.querySelector('.view-work');
+    const xTo = gsap.quickTo(btn, 'x', { duration: 0.5, ease: 'power3' });
+    const yTo = gsap.quickTo(btn, 'y', { duration: 0.5, ease: 'power3' });
+
+    const pos = (e) => {
+      const r = media.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    };
+
+    media.addEventListener('mouseenter', (e) => {
+      buttons.forEach((b) => { if (b !== btn) hideBtn(b); }); // force-hide the others
+      const p = pos(e);
+      gsap.set(btn, { x: p.x, y: p.y }); // pop in exactly at cursor
+      showBtn(btn);
+    });
+
+    media.addEventListener('mousemove', (e) => {
+      const p = pos(e);
+      xTo(p.x);
+      yTo(p.y);
+    });
+
+    media.addEventListener('mouseleave', () => hideBtn(btn));
+  });
+
+  // safety net: leaving the whole grid fast hides everything
+  const grid = document.querySelector('#works-grid');
+  if (grid) grid.addEventListener('mouseleave', () => buttons.forEach(hideBtn));
+});
+
+
+
+
+
+//testimonial section end
+
+
+function initContentTestimonialSlider() {
+  if (!document.getElementById('testimonialSlider')) return;
+ 
+  const arrowSVG = `<svg width="7" height="18" viewBox="0 0 7 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M6.51528 8.96788L1.76758 0L0 0.93578L4.25228 8.96788L0 17L1.76758 17.9358L6.51528 8.96788Z" fill="white"/>
+</svg>
+
+`;
+ 
+  const testimonialSplide = new Splide('#testimonialSlider', {
+    type: 'loop', perPage: 2, perMove: 1, gap: '2rem',
+    autoplay: true, interval: 4000, pauseOnHover: true,
+    arrows: true, pagination: false,
+    breakpoints: { 1024: { perPage: 1, gap: '1.5rem' } }
+  });
+ 
+  testimonialSplide.mount();
+ 
+  const testimonialWrapper = document.getElementById('testimonialSlider').closest('.content-our-testimonial');
+  if (!testimonialWrapper) return;
+ 
+  const originalArrows           = testimonialWrapper.querySelector('.splide__arrows');
+  const testimonialArrowsDesktop = testimonialWrapper.querySelector('.testimonial-real-content-slider-arrows-desktop');
+  const testimonialArrowsMobile  = testimonialWrapper.querySelector('.testimonial-real-content-slider-arrows-mobile');
+ 
+  if (!originalArrows || !testimonialArrowsDesktop || !testimonialArrowsMobile) return;
+ 
+  testimonialArrowsDesktop.innerHTML = originalArrows.innerHTML;
+  testimonialArrowsMobile.innerHTML  = originalArrows.innerHTML;
+ 
+  [testimonialArrowsDesktop, testimonialArrowsMobile].forEach(container => {
+    container.querySelectorAll('.splide__arrow').forEach(arrow => { arrow.innerHTML = arrowSVG; });
+    const prevBtn = container.querySelector('.splide__arrow--prev');
+    const nextBtn = container.querySelector('.splide__arrow--next');
+    if (prevBtn) prevBtn.addEventListener('click', () => testimonialSplide.go('<'));
+    if (nextBtn) nextBtn.addEventListener('click', () => testimonialSplide.go('>'));
+  });
+ 
+  originalArrows.style.display = 'none';
+}
+ 
+document.addEventListener('DOMContentLoaded', initContentTestimonialSlider);
