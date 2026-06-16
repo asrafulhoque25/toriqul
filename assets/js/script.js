@@ -111,9 +111,16 @@ safe('active-nav', function () {
     const link = item.querySelector('a');
     if (!link) return;
     link.addEventListener('click', function (e) {
-      e.preventDefault();
+      const href = link.getAttribute('href');
+
+      // set active state
       navItems.forEach(el => el.classList.remove('active'));
       item.classList.add('active');
+
+      // only block placeholder links ("#"); real links navigate normally
+      if (!href || href === '#') {
+        e.preventDefault();
+      }
     });
   });
 });
