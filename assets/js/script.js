@@ -391,3 +391,280 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 })();
+
+
+
+
+
+
+
+
+// featrue work tab
+
+(function () {
+  const root = document.getElementById('featured-work');
+  if (!root) return;
+
+  const PAGE_SIZE = 6;
+  const tabsEl  = root.querySelector('#fw-tabs');
+  const featEl  = root.querySelector('#fw-featured');
+  const titleEl = root.querySelector('#fw-all-title');
+  const gridEl  = root.querySelector('#fw-grid');
+  const pagEl   = root.querySelector('#fw-pagination');
+  const allCards = [].slice.call(gridEl.querySelectorAll('.work-card'));
+
+  let currentFilter = 'all';
+  let currentLabel  = 'All Industries';
+  let currentPage   = 1;
+
+  const arrowSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  /* read one card's data straight from its HTML */
+  function readCard(card) {
+    return {
+      href:  card.getAttribute('href') || '#',
+      img:   card.querySelector('img') ? card.querySelector('img').getAttribute('src') : '',
+      title: (card.querySelector('.fw-title') || {}).textContent || '',
+      desc:  card.dataset.featuredDesc || ((card.querySelector('.fw-desc') || {}).textContent || ''),
+      meta:  (card.querySelector('.fw-meta') || {}).textContent || '',
+      chips: [].slice.call(card.querySelectorAll('.fw-chip')).map(function (c) { return c.textContent.trim(); })
+    };
+  }
+
+  function getMatching() {
+    return currentFilter === 'all'
+      ? allCards
+      : allCards.filter(function (c) { return c.dataset.industry === currentFilter; });
+  }
+
+  function pickFeatured(matching) {
+    if (!matching.length) return null;
+    if (currentFilter === 'all') {
+      return matching.find(function (c) { return c.dataset.featuredDefault === 'true'; })
+          || matching.find(function (c) { return c.dataset.featured === 'true'; })
+          || matching[0];
+    }
+    return matching.find(function (c) { return c.dataset.featured === 'true'; }) || matching[0];
+  }
+
+  /* ---- featured ---- */
+  function renderFeatured(card) {
+    if (!card) { featEl.innerHTML = ''; return; }
+    const d = readCard(card);
+    const chips = d.chips.map(function (l) {
+      return '<span class="flex items-center gap-2 font-medium text-sm md:text-base lg:text-lg"><span class="md:w-2.5 md:h-2.5 w-1.5 h-1.5 rounded-[3px] bg-main shrink-0"></span>' + l + '</span>';
+    }).join('<span class="w-px h-3 bg-dark2/30"></span>');
+
+    featEl.innerHTML =
+      '<div class="grid lg:grid-cols-2 bg-[#F6F6F6] rounded-3xl overflow-hidden ">' +
+        '<div class="relative aspect-[4/3] lg:aspect-auto lg:min-h-[440px]">' +
+          '<img src="' + d.img + '" alt="" class="absolute inset-0 w-full h-full object-cover">' +
+          '<span class="absolute top-5 left-5 bg-white text-main text-sm font-bold uppercase tracking-wide px-3 py-1.5 rounded-full shadow-sm">Featured Work</span>' +
+        '</div>' +
+        '<div class="lg:p-10 md:p-8 p-6 flex flex-col justify-center">' +
+          '<div class="flex flex-wrap items-center gap-x-3 gap-y-2 mb-5 text-sm text-dark2">' + chips + '</div>' +
+          '<h3 class="text-dark1 font-bold lg:text-[32px] md:text-2xl text-xl leading-[130%] mb-5">' + d.title + '</h3>' +
+          '<div class="border-l-2 border-main pl-4 mb-6"><p class="text-dark2 leading-[150%] lg:text-lg md:text-base text-sm font-medium">' + d.desc + '</p></div>' +
+          '<p class="text-dark2 lg:text-lg md:text-base text-sm font-medium mb-6">' + d.meta + '</p>' +
+          '<a href="' + d.href + '" class="self-start inline-flex items-center gap-2 bg-dark1 hover:bg-main text-white font-bold rounded-full px-6 py-3 transition-colors">View Full Case Study ' + arrowSVG + '</a>' +
+        '</div>' +
+      '</div>';
+  }
+
+  /* ---- grid show/hide + pagination ---- */
+  function renderGrid(gridCards) {
+    allCards.forEach(function (c) { c.style.display = 'none'; });
+
+    if (!gridCards.length) {
+      pagEl.innerHTML = '';
+      if (!featEl.innerHTML) featEl.innerHTML = '<div class="bg-white/[0.03] border border-white/10 rounded-3xl p-12 text-center text-dark2">No work in this industry yet — check back soon.</div>';
+      return;
+    }
+
+    const totalPages = Math.ceil(gridCards.length / PAGE_SIZE);
+    if (currentPage > totalPages) currentPage = 1;
+    const start = (currentPage - 1) * PAGE_SIZE;
+    gridCards.slice(start, start + PAGE_SIZE).forEach(function (c) { c.style.display = ''; });
+    renderPagination(totalPages);
+  }
+
+  function pageList(total, page) {
+    if (total <= 7) { return Array.from({ length: total }, function (_, i) { return i + 1; }); }
+    const out = [1];
+    if (page > 3) out.push('...');
+    for (let i = Math.max(2, page - 1); i <= Math.min(total - 1, page + 1); i++) out.push(i);
+    if (page < total - 2) out.push('...');
+    out.push(total);
+    return out;
+  }
+
+  function renderPagination(total) {
+    if (total <= 1) { pagEl.innerHTML = ''; return; }
+    const circle = 'flex items-center justify-center w-12 h-12 rounded-full text-xl font-medium';
+    let html = '<button data-pg="prev" class="pg-btn ' + circle + '" aria-label="Previous"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
+    pageList(total, currentPage).forEach(function (p) {
+      html += (p === '...')
+        ? '<span class="px-1 text-dark2">…</span>'
+        : '<button data-pg="' + p + '" class="pg-btn ' + circle + (p === currentPage ? ' is-active' : '') + '">' + p + '</button>';
+    });
+    html += '<button data-pg="next" class="pg-btn ' + circle + '" aria-label="Next"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
+    pagEl.innerHTML = html;
+  }
+
+  function renderTitle() {
+    titleEl.textContent = currentFilter === 'all'
+      ? 'Check My All Works'
+      : 'Check My All ' + currentLabel + ' Works';
+  }
+
+  function render() {
+    const matching = getMatching();
+    const featured = pickFeatured(matching);
+    renderFeatured(featured);
+    const gridCards = matching.filter(function (c) { return c !== featured; });
+    renderTitle();
+    renderGrid(gridCards);
+  }
+
+  /* ---- "View Work" cursor-follow (cards are static, attach once) ---- */
+  function attachViewWork() {
+    if (!window.gsap) return;
+    const buttons = allCards.map(function (c) { return c.querySelector('.view-work'); });
+    buttons.forEach(function (b) { gsap.set(b, { xPercent: -50, yPercent: -50, scale: 0, opacity: 0 }); });
+
+    allCards.forEach(function (card) {
+      const media = card.querySelector('.work-media');
+      const btn = card.querySelector('.view-work');
+      const xTo = gsap.quickTo(btn, 'x', { duration: 0.5, ease: 'power3' });
+      const yTo = gsap.quickTo(btn, 'y', { duration: 0.5, ease: 'power3' });
+      const pos = function (e) { const r = media.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+
+      media.addEventListener('mouseenter', function (e) {
+        buttons.forEach(function (b) { if (b !== btn) gsap.to(b, { scale: 0, opacity: 0, duration: 0.3, ease: 'power2.in' }); });
+        const p = pos(e); gsap.set(btn, { x: p.x, y: p.y });
+        gsap.to(btn, { scale: 1, opacity: 1, duration: 0.45, ease: 'back.out(1.8)' });
+      });
+      media.addEventListener('mousemove', function (e) { const p = pos(e); xTo(p.x); yTo(p.y); });
+      media.addEventListener('mouseleave', function () { gsap.to(btn, { scale: 0, opacity: 0, duration: 0.3, ease: 'power2.in' }); });
+    });
+  }
+
+  /* ---- events ---- */
+  tabsEl.addEventListener('click', function (e) {
+    const btn = e.target.closest('.fw-tab');
+    if (!btn) return;
+    tabsEl.querySelectorAll('.fw-tab').forEach(function (t) { t.classList.remove('is-active'); });
+    btn.classList.add('is-active');
+    currentFilter = btn.dataset.filter;
+    currentLabel  = btn.textContent.trim();
+    currentPage   = 1;
+    render();
+  });
+
+  pagEl.addEventListener('click', function (e) {
+    const btn = e.target.closest('.pg-btn');
+    if (!btn) return;
+    const matching = getMatching();
+    const featured = pickFeatured(matching);
+    const gridCards = matching.filter(function (c) { return c !== featured; });
+    const totalPages = Math.max(1, Math.ceil(gridCards.length / PAGE_SIZE));
+    const val = btn.dataset.pg;
+
+    if (val === 'prev') currentPage = Math.max(1, currentPage - 1);
+    else if (val === 'next') currentPage = Math.min(totalPages, currentPage + 1);
+    else currentPage = +val;
+
+    renderGrid(gridCards);
+    root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  /* ---- init ---- */
+  attachViewWork();
+  render();
+})();
+
+
+
+
+//about us counter
+
+(function () {
+  const section = document.getElementById('upwork-stats');
+  if (!section) return;
+  const counters = section.querySelectorAll('.stat-num');
+  if (!counters.length) return;
+  let started = false;
+ 
+  function formatNum(n, format) {
+    return format === 'comma' ? n.toLocaleString() : String(n);
+  }
+ 
+  function runCounters() {
+    counters.forEach(function (el) {
+      const target   = +el.dataset.target;
+      const prefix   = el.dataset.prefix || '';
+      const suffix   = el.dataset.suffix || '';
+      const format   = el.dataset.format || '';
+      const duration = 1800;
+      const steps    = 60;
+      const interval = duration / steps;
+      let current    = 0;
+ 
+      const timer = setInterval(function () {
+        current += target / steps;
+        if (current >= target) { current = target; clearInterval(timer); }
+        el.textContent = prefix + formatNum(Math.floor(current), format) + suffix;
+      }, interval);
+    });
+  }
+ 
+  const observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting && !started) {
+        started = true;
+        runCounters();
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+ 
+  observer.observe(section);
+})();
+
+
+
+//about timeline 
+
+
+(function () {
+  if (!window.gsap) return;
+  const root = document.getElementById('seo-journey');
+  if (!root) return;
+  if (window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+ 
+  // title
+  gsap.from(root.querySelector('.tl-title'), {
+    y: 30, opacity: 0, duration: 0.8, ease: 'power3.out',
+    scrollTrigger: { trigger: root, start: 'top 80%' }
+  });
+ 
+  // dotted line draws downward — completes fully to the last item (no scrub,
+  // so it never stops short when there's no scroll room left at the bottom)
+  const line  = root.querySelector('.tl-line');
+  const track = root.querySelector('.tl-track');
+  if (line && track) {
+    gsap.fromTo(line, { scaleY: 0 }, {
+      scaleY: 1, transformOrigin: 'top center', duration: 1.4, ease: 'power2.out',
+      scrollTrigger: { trigger: track, start: 'top 75%', once: true }
+    });
+  }
+ 
+  // each item: circle pops, content slides in
+  root.querySelectorAll('.tl-item').forEach(function (item) {
+    const circle  = item.querySelector('.tl-circle');
+    const content = item.querySelector('.tl-content');
+    const tl = gsap.timeline({ scrollTrigger: { trigger: item, start: 'top 80%', once: true } });
+    tl.from(circle,  { scale: 0, opacity: 0, duration: 0.5, ease: 'back.out(1.7)' })
+      .from(content, { x: 40, opacity: 0, duration: 0.6, ease: 'power3.out' }, '-=0.25');
+  });
+})();

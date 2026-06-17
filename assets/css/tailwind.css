@@ -75,7 +75,7 @@ html {
 /* HTML & body */
 body {
   height: 100%;
-  font-family: "Inter Tight", sans-serif;
+  font-family: "Urbanist", sans-serif;
   overflow-x: hidden;
 }
 
@@ -683,3 +683,17 @@ html.lenis body {
   .faq-item.open .faq-a-wrap{ grid-template-rows:1fr; }
   .faq-item.open .faq-vert{ transform:rotate(90deg); }
   .faq-item.open .faq-icon{ color:#7D963D; }
+
+
+
+
+
+  /* work tab   */
+
+
+    .fw-tab{ border:1px solid #E2E2E2; color:#433F34; transition:all .2s ease;font-size: 18px; font-weight: 500; }
+  .fw-tab:hover{ border-color:#7D963D; color:#000; }
+  .fw-tab.is-active{ background:#7D963D; border-color:#7D963D; color:#fff; }
+  .pg-btn{ border:1px solid #433F34; color:#433F34; transition:all .2s ease; }
+  .pg-btn:hover{ border-color:#7D963D; color:#7D963D; }
+  .pg-btn.is-active{ background:#7d9b40; border-color:#7d9b40; color:#fff; }
