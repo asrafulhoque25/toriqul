@@ -500,7 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderPagination(total) {
     if (total <= 1) { pagEl.innerHTML = ''; return; }
-    const circle = 'flex items-center justify-center w-12 h-12 rounded-full text-xl font-medium';
+    const circle = 'flex items-center justify-center md:w-12 w-8 md:h-12 h-8 rounded-full md:text-xl text-base font-medium';
     let html = '<button data-pg="prev" class="pg-btn ' + circle + '" aria-label="Previous"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
     pageList(total, currentPage).forEach(function (p) {
       html += (p === '...')

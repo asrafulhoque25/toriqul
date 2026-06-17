@@ -697,3 +697,11 @@ html.lenis body {
   .pg-btn{ border:1px solid #433F34; color:#433F34; transition:all .2s ease; }
   .pg-btn:hover{ border-color:#7D963D; color:#7D963D; }
   .pg-btn.is-active{ background:#7d9b40; border-color:#7d9b40; color:#fff; }
+
+
+  @media(max-width:640px){
+     .fw-tab{ 
+      font-size: 14px;
+      padding: 6px 10px ;
+    }
+  }
